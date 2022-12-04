@@ -5,12 +5,30 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const BooksSchema = new Schema({
-    title: String,
-    title_nl: String,
-    author: String,
-    series: String,
-    number: String,
-    year: String
+    title: {
+        type: String,
+        required: true,
+    },
+    title_nl:{
+        type: String,
+        required: true,
+    },
+    author: {
+        type: String,
+        required: true,
+    },
+    series: {
+        type: String,
+        required: true,
+    },
+    number: {
+        type: String,
+        required: true,
+    },
+    year: {
+        type: String,
+        required: true,
+    }
 }, { toJSON: {virtuals: true} });
 
 // Add virtual property to Book, ton include {dynamic} links
