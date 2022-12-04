@@ -1,0 +1,142 @@
+const express = require("express");
+
+const router = express.Router()
+
+const Book = require("../models/booksModel");
+
+let books = [
+    {
+        title: "Harry Potter and the Philosophers Stone",
+        title_nl: "Harry Potter en de Steen der Wijzen",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "1",
+        year: "1997"
+    },
+    {
+        title: "Harry Potter and the Chamber of Secrets",
+        title_nl: "Harry Potter en de Geheime Kamer",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "2",
+        year: "1998"
+    },
+    {
+        title: "Harry Potter and the Prisoner of Azkaban",
+        title_nl: "Harry Potter en de Gevangene van Azkaban",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "3",
+        year: "1999"
+    },
+    {
+        title: "Harry Potter and the Goblet of Fire",
+        title_nl: "Harry Potter en de Vuurbeker",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "4",
+        year: "2000"
+    },
+    {
+        title: "Harry Potter and the Order of the Phoenix",
+        title_nl: "Harry Potter en de Orde van de Feniks",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "5",
+        year: "2003"
+    },
+    {
+        title: "Harry Potter and the Half-Blood Prince",
+        title_nl: "Harry Potter en de Halfbloed Prins",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "6",
+        year: "2005"
+    },
+    {
+        title: "Harry Potter and the Deathly Hallows",
+        title_nl: "Harry Potter en de Relieken van de Dood",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "7",
+        year: "2007"
+    }
+]
+
+
+router.get('/', async (req, res) => {
+    console.log("They be GETting your books")
+    try {
+        let books = await Book.find();
+
+        // Create representation for collections as requested in assignment
+        let booksCollection = {
+            items: books,
+            _links: {
+                self: {
+                    href: `${process.env.BASE_URI}:${process.env.PORT}/books/`
+                },
+                collection: {
+                    href: `${process.env.BASE_URI}:${process.env.PORT}/books/`
+                }
+            },
+            pagination: "WIP"
+
+        }
+        res.json(booksCollection)
+    } catch {
+        res.status(500).send();
+    }
+});
+
+router.get('/:id', async (req, res) => {
+    console.log(`They be GETting your book: ${req.params.id}`)
+    try {
+        let book = await Book.findById(req.params.id);
+        res.json(book);
+    } catch {
+        res.status(404).send();
+    }
+});
+
+// middleware check header Content-type
+router.post('/', (req, res, next) => {
+  if (req.header("content-type") === "application/json") {
+      next();
+  } else {
+      res.status(415).send();
+  }
+});
+
+// add resource to collections: POST
+router.post('/', async (req, res) => {
+    console.log("They POSTed your memoir")
+    let book = new Book({
+        title: "Harry Potter and the Philosophers Stone",
+        title_nl: "Harry Potter en de Steen der Wijzen",
+        author: "J.K. Rowling",
+        series: "Harry Potter",
+        number: "1",
+        year: "1997"
+    });
+
+    try {
+        await book.save();
+        res.status(201).json(book);
+    } catch {
+        res.status(500).send();
+    }
+});
+
+router.delete('/', (req, res) => {
+    console.log("They DELETEd your library")
+
+    res.send('DELETE your emotions')
+});
+
+router.options('/', (req, res) => {
+    console.log("So many characters, so many OPTIONS!")
+    res.setHeader("Allow", "GET, POST, OPTIONS").send();
+});
+
+module.exports = router;
