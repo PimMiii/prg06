@@ -18,17 +18,17 @@ jobs:
         with:
           username: ${{ secrets.USERNAME }}
           server: ${{ secrets.HOST }}
-          port: ${{ PORT }}
+          port: ${{ secrets.PORT }}
           ssh_private_key: ${{ secrets.SSH_KEY }}
           password: ${{ secrets.SSH_PASS }}
-          
- 
-          
+
+
+
           # will put all file under this path
           local_path: ./* # default is ./*
           # files will copy to under remote_path
           remote_path: /test
-          
+
           # sftp args
           args: '-o ConnectTimeout=5'
 
