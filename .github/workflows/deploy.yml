@@ -23,7 +23,7 @@ jobs:
           PASSPHRASE: ${{ secrets.SSH_PASS }}
         with:
           source: "."
-          target: "/test"
+          target: "/test/"
 
       - name: Executing remote command
         uses: appleboy/ssh-action@master
