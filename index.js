@@ -1,5 +1,5 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+
 
 // Load environment variables
 require('dotenv').config();
@@ -20,6 +20,9 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 // create webserver and assign port
 const app = express();
 const port = process.env.PORT;
+
+app.use (express.json());
+app.use(express.urlencoded({ extended: true}))
 
 const booksRouter = require('./routers/booksRouter')
 //create route
