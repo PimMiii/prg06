@@ -1,5 +1,5 @@
 const express = require('express');
-
+const cors = require('cors');
 
 // Load environment variables
 require('dotenv').config();
@@ -21,12 +21,19 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 const app = express();
 const port = process.env.PORT;
 
-app.use (express.json());
-app.use(express.urlencoded({ extended: true}))
+/*app.use(cors());
+let corsOptions = {
+    origin: 'https://basboot.nl',
+    optionsSuccessStatus: 200
+}
+app.options('*', cors());*/
 
-const booksRouter = require('./routers/booksRouter')
+app.use (express.json());
+app.use(express.urlencoded({ extended: true}));
+
+const booksRouter = require('./routers/booksRouter');
 //create route
-app.use("/books/", booksRouter)
+app.use("/books/", booksRouter);
 
 
 // start webserver
