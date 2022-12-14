@@ -199,7 +199,4 @@ router.options('/:id', (req, res) => {
     res.send();
 });
 
-// Pagination functions
-
-
 module.exports = router;
