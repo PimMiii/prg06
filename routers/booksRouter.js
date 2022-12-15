@@ -20,8 +20,9 @@ router.get(['/', '/:id'], (req, res, next) => {
 // GET complete collection
 router.get('/', async (req, res) => {
     console.log("They be GETting your books")
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
     try {
-        /*let books = await Book.find();*/
 
         // Define pagination variables
         const start = parseInt(req.query.start)
@@ -29,8 +30,16 @@ router.get('/', async (req, res) => {
         const totalItems = await Book.count(); //is always the count of Books
         let books
         let currentItems = totalItems;
+
+        // set default pages
         let totalPages =1;
         let currentPage = 1;
+
+        // set default links
+        let linkFirst = `${booksURI}?start=1&limit=${limit}`;
+        let linkLast = `${booksURI}?start=1&limit=${limit}`;
+        let linkPrevious = `${booksURI}?start=1&limit=${limit}`;
+        let linkNext = `${booksURI}?start=1&limit=${limit}`;
 
         // check if start AND limit are set, otherwise we can do with defaults above.
         if(!isNaN(start) && !isNaN(limit)){
@@ -43,18 +52,37 @@ router.get('/', async (req, res) => {
             books = await Book.find().skip(start -1).limit(limit);
             currentItems = books.length;
 
+            // Calculate pages
+            totalPages = Math.ceil(totalItems / limit);
+            currentPage = Math.ceil(start / limit);
 
+            // Calculate query strings
+            let startValue = 1;
+            linkFirst = `${booksURI}?start=${startValue}&limit=${limit}`;
+
+            let lastValue = (totalItems - limit) + 1;
+            linkLast = `${booksURI}?start=${lastValue}&limit=${limit}`;
+
+            let nextValue;
+            if(start + limit > totalItems){
+                nextValue = lastValue;
+            } else {
+                nextValue = start + limit;
+            }
+            linkNext = `${booksURI}?start=${nextValue}&limit=${limit}`;
+
+            let previousValue;
+            if(start - limit < 1){
+                previousValue = 1;
+            } else {
+                previousValue = start - limit;
+            }
+            linkPrevious = `${booksURI}?start=${previousValue}&limit=${limit}`;
 
         } else {
             // Query all books
             books = await Book.find();
         }
-
-
-
-
-
-
 
         // Create representation for collections as requested in assignment
         let booksCollection = {
@@ -75,19 +103,19 @@ router.get('/', async (req, res) => {
                 _links : {
                     first: {
                         page: 1,
-                        href:`${booksURI}?start=1&limit=${limit}`
+                        href:linkFirst
                     },
                     last: {
                         page : 1,
-                        href: `${booksURI}?start=1&limit=${limit}`
+                        href: linkLast
                     },
                     previous: {
                         page : 1,
-                        href: `${booksURI}?start=1&limit=${limit}`
+                        href: linkPrevious
                     },
                     next: {
                         page : 1,
-                        href: `${booksURI}?start=1&limit=${limit}`
+                        href: linkNext
                     }
                 }
             }
@@ -101,7 +129,9 @@ router.get('/', async (req, res) => {
 
 // GET specific resource by id
 router.get('/:id', async (req, res) => {
-    console.log(`They be GETting your book: ${req.params.id}`)
+    console.log(`They be GETting your book: ${req.params.id}`);
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
     try {
         let book = await Book.findById(req.params.id);
         console.log(book)
