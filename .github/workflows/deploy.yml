@@ -13,24 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
+      - name: Copy repository contents via scp
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSH_KEY }}
+          PASSPHRASE: ${{ secrets.SSH_PASS }}
         with:
-          username: ${{ secrets.USERNAME }}
-          server: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          ssh_private_key: ${{ secrets.SSH_KEY }}
-          password: ${{ secrets.SSH_PASS }}
-
-
-
-          # will put all file under this path
-          local_path: ./* # default is ./*
-          # files will copy to under remote_path
-          remote_path: /test
-
-          # sftp args
-          args: '-o ConnectTimeout=5'
+          source: "."
+          target: "~/test/"
 
       - name: Executing remote command
         uses: appleboy/ssh-action@master
