@@ -8,6 +8,11 @@ const booksURI = `${process.env.BASE_URI}:${process.env.PORT}/books/`
 
 // middleware check header Accept
 router.get(['/', '/:id'], (req, res, next) => {
+    // set CORS headers for GET
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
+
+    // check if Accept is set to application/json
     switch (req.header("Accept")) {
         case "application/json":
             next();
@@ -19,11 +24,10 @@ router.get(['/', '/:id'], (req, res, next) => {
 
 // GET complete collection
 router.get('/', async (req, res) => {
+    // log method used
     console.log("They be GETting your books")
-    res.append("Access-Control-Allow-Origin", "*");
-    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
-    try {
 
+    try {
         // Define pagination variables
         const start = parseInt(req.query.start)
         const limit = parseInt(req.query.limit)
@@ -129,9 +133,9 @@ router.get('/', async (req, res) => {
 
 // GET specific resource by id
 router.get('/:id', async (req, res) => {
+    // log method used
     console.log(`They be GETting your book: ${req.params.id}`);
-    res.append("Access-Control-Allow-Origin", "*");
-    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
+
     try {
         let book = await Book.findById(req.params.id);
         console.log(book)
@@ -147,6 +151,7 @@ router.get('/:id', async (req, res) => {
 
 // middleware check header Content-type
 router.post('/', (req, res, next) => {
+    // check if content-type header is set appropriately
     switch (req.header("content-type")) {
         case "application/json":
             next();
@@ -161,6 +166,7 @@ router.post('/', (req, res, next) => {
 
 // add resource to collections: POST
 router.post('/', async (req, res) => {
+    // log method used
     console.log("They POSTed your memoir")
 
     let book = new Book({
@@ -182,6 +188,7 @@ router.post('/', async (req, res) => {
 
 // DELETE specific resource by id
 router.delete('/:id', async (req, res) => {
+    // log method used
     console.log("They DELETEd your library")
 
     try {
@@ -194,6 +201,7 @@ router.delete('/:id', async (req, res) => {
 
 // update specific resource using PUT
 router.put('/:id', async (req, res) => {
+    // log method used
     console.log("PUTting different words in your mouth")
 
     try {
@@ -215,17 +223,25 @@ router.put('/:id', async (req, res) => {
 
 // Collection Options
 router.options('/', (req, res) => {
-    console.log("So many characters, so many OPTIONS!")
+    // log method used
+    console.log("So many characters, so many OPTIONS!");
+
+    // set CORS headers
     res.append("Allow", "GET, POST, OPTIONS");
     res.append("Access-Control-Allow-Methods", "GET, POST OPTIONS");
+
     res.send();
 });
 
 // Resource Options
 router.options('/:id', (req, res) => {
-    console.log("So many characters, so many OPTIONS!")
+    // log method used
+    console.log("So many characters, so many OPTIONS!");
+
+    // set CORS headers
     res.append("Allow", "GET, PUT, DELETE, OPTIONS");
     res.append("Access-Control-Allow-Methods", "GET, PUT, DELETE, OPTIONS");
+
     res.send();
 });
 
