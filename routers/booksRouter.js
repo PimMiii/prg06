@@ -24,8 +24,10 @@ router.get(['/', '/:id'], (req, res, next) => {
 
 // GET complete collection
 router.get('/', async (req, res) => {
+
     // log method used
-    console.log("They be GETting your books")
+    console.log("They be GETting your books");
+
 
     try {
         // Define pagination variables
@@ -36,7 +38,7 @@ router.get('/', async (req, res) => {
         let currentItems = totalItems;
 
         // set default pages
-        let totalPages =1;
+        let totalPages = 1;
         let currentPage = 1;
 
         // set default links
@@ -46,14 +48,14 @@ router.get('/', async (req, res) => {
         let linkNext = `${booksURI}?start=1&limit=${limit}`;
 
         // check if start AND limit are set, otherwise we can do with defaults above.
-        if(!isNaN(start) && !isNaN(limit)){
+        if (!isNaN(start) && !isNaN(limit)) {
             totalPages =
                 totalItems % limit === 0
-                ? totalItems / limit
-                : Math.floor(totalItems/limit) + 1;
+                    ? totalItems / limit
+                    : Math.floor(totalItems / limit) + 1;
 
             // Query this page's books
-            books = await Book.find().skip(start -1).limit(limit);
+            books = await Book.find().skip(start - 1).limit(limit);
             currentItems = books.length;
 
             // Calculate pages
@@ -68,7 +70,7 @@ router.get('/', async (req, res) => {
             linkLast = `${booksURI}?start=${lastValue}&limit=${limit}`;
 
             let nextValue;
-            if(start + limit > totalItems){
+            if (start + limit > totalItems) {
                 nextValue = lastValue;
             } else {
                 nextValue = start + limit;
@@ -76,7 +78,7 @@ router.get('/', async (req, res) => {
             linkNext = `${booksURI}?start=${nextValue}&limit=${limit}`;
 
             let previousValue;
-            if(start - limit < 1){
+            if (start - limit < 1) {
                 previousValue = 1;
             } else {
                 previousValue = start - limit;
@@ -100,25 +102,25 @@ router.get('/', async (req, res) => {
                 }
             },
             pagination: {
-                currentPage : currentPage,
-                currentItems : currentItems,
-                totalPages : totalPages,
+                currentPage: currentPage,
+                currentItems: currentItems,
+                totalPages: totalPages,
                 totalItems: totalItems,
-                _links : {
+                _links: {
                     first: {
                         page: 1,
-                        href:linkFirst
+                        href: linkFirst
                     },
                     last: {
-                        page : 1,
+                        page: 1,
                         href: linkLast
                     },
                     previous: {
-                        page : 1,
+                        page: 1,
                         href: linkPrevious
                     },
                     next: {
-                        page : 1,
+                        page: 1,
                         href: linkNext
                     }
                 }
@@ -166,6 +168,8 @@ router.post('/', (req, res, next) => {
 
 // add resource to collections: POST
 router.post('/', async (req, res) => {
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
     // log method used
     console.log("They POSTed your memoir")
 
@@ -188,6 +192,8 @@ router.post('/', async (req, res) => {
 
 // DELETE specific resource by id
 router.delete('/:id', async (req, res) => {
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
     // log method used
     console.log("They DELETEd your library")
 
@@ -201,6 +207,9 @@ router.delete('/:id', async (req, res) => {
 
 // update specific resource using PUT
 router.put('/:id', async (req, res) => {
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
+
     // log method used
     console.log("PUTting different words in your mouth")
 
@@ -227,8 +236,10 @@ router.options('/', (req, res) => {
     console.log("So many characters, so many OPTIONS!");
 
     // set CORS headers
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
     res.append("Allow", "GET, POST, OPTIONS");
-    res.append("Access-Control-Allow-Methods", "GET, POST OPTIONS");
+    res.append("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 
     res.send();
 });
@@ -237,6 +248,8 @@ router.options('/', (req, res) => {
 router.options('/:id', (req, res) => {
     // log method used
     console.log("So many characters, so many OPTIONS!");
+    res.append("Access-Control-Allow-Origin", "*");
+    res.append("Access-Control-Allow-Headers", ["Accept", "Content-Type"]);
 
     // set CORS headers
     res.append("Allow", "GET, PUT, DELETE, OPTIONS");
